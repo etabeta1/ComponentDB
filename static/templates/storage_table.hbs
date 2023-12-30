@@ -1,22 +1,22 @@
 <div class="table-responsive">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Part count</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each rows}}
-            <tr>
-                <td>{{Id}}</td>
-                <td>{{Name}}</td>
-                <td>{{Description}}</td>
-                <td>{{Part_count}}</td>
-            </tr>
-            {{/each}}
-    </table>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Part count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each rows}}
+      <tr>
+        <td>{{Id}}</td>
+        <td>{{Name}}</td>
+        <td>{{Description}}</td>
+        <td>{{Part_count}}</td>
+      </tr>
+      {{/each}}
+  </table>
 </div>
 <div class="btn btn-primary" onclick="showCreateNewForm('STORAGE')">New</div>

@@ -87,7 +87,7 @@ apiRouter.post('/parts', (req, res) => {
             res.status(500).send(err.message);
         } else {
             const sql = "INSERT INTO Parts (MPN, Description, Manufacturer, Datasheet, StorageId, Amount) VALUES (?, ?, ?, ?, ?, ?);";
-            db.run(sql, [req.body.MPN, req.body.Description, req.body.Manufacturer, req.body.Datasheet, row.Id, req.body.Amount], (err) => {
+            db.run(sql, [req.body.MPN.trim(), req.body.Description.trim(), req.body.Manufacturer.trim(), req.body.Datasheet.trim(), row.Id, req.body.Amount], (err) => {
                 if (err) {
                     res.status(500).send(err.message);
                 } else {
@@ -120,7 +120,7 @@ apiRouter.put('/parts/:id', (req, res) => {
             res.status(500).send(err.message);
         } else {
             const sql = "UPDATE Parts SET MPN = ?, Description = ?, Manufacturer = ?, Datasheet = ?, StorageId = ?, Amount = ? WHERE Id = ?;";
-            db.run(sql, [req.body.MPN, req.body.Description, req.body.Manufacturer, req.body.Datasheet, row.Id, req.body.Amount, req.params.id], (err) => {
+            db.run(sql, [req.body.MPN.trim(), req.body.Description.trim(), req.body.Manufacturer.trim(), req.body.Datasheet.trim(), row.Id, req.body.Amount, req.params.id], (err) => {
                 if (err) {
                     res.status(500).send(err.message);
                 } else {
@@ -143,6 +143,45 @@ apiRouter.get('/storages', (req, res) => {
             });
         }
     });
+});
+
+apiRouter.post('/storages', (req, res) => {
+    if (!req.body.Name) {
+        res.status(400).send("Name is required");
+        return;
+    }
+
+    if (!req.body.Begin_number) {
+        res.status(400).send("Begin number is required");
+        return;
+    }
+
+    if (!req.body.End_number) {
+        res.status(400).send("End number is required");
+        return;
+    }
+
+    if (req.body.Begin_number > req.body.End_number) {
+        res.status(400).send("Begin number must be smaller than end number");
+        return;
+    }
+
+    let sql = "INSERT INTO Storage (Name, Description) VALUES " + Array(req.body.End_number - req.body.Begin_number + 1).fill("(?, ?)").join(", ") + ";";
+    let args = [];
+
+    for (let i = req.body.Begin_number; i <= req.body.End_number; i++) {
+        args.push(req.body.Name.trim() + "-" + i);
+        args.push(req.body.Description.trim());
+    }
+
+    db.run(sql, args, (err) => {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            res.sendStatus(200);
+        }
+    });
+
 });
 
 apiRouter.get("/storage_names", (req, res) => {

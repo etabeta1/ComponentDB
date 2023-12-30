@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS Storage (
     Description TEXT
 );
 
+INSERT INTO Storage (Name, Description) VALUES ('Somewhere else', 'The default storage location for parts that are not stored anywhere.');
+
 CREATE TABLE IF NOT EXISTS Parts (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     MPN TEXT NOT NULL,

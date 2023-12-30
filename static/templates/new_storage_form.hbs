@@ -1,0 +1,36 @@
+<form id="part_form">
+  <input type="hidden" name="Id" value="{{Id}}">
+  <div class="container">
+    <div class="row mt-1">
+      <div class="col-md-6">
+        <label for="edit_name">Storage name</label>
+        <input type="text" class="form-control" id="edit_name" aria-describedby="name_help" placeholder="Storage name"
+          value="" name="Name">
+        <small id="name_help" class="form-text text-muted">The name of the storage.</small>
+      </div>
+      <div class="col-md-3">
+        <label for="edit_begin">Begin</label>
+        <input type="number" class="form-control" id="edit_begin" aria-describedby="begin_help" placeholder="Begin"
+          value="0" min="0" name="Begin_number">
+        <small id="begin_help" class="form-text text-muted">The number of the first sub-storage.</small>
+      </div>
+      <div class="col-md-3">
+        <label for="edit_end">End</label>
+        <input type="number" class="form-control" id="edit_end" aria-describedby="end_help" placeholder="End" value="0"
+          min="0" name="End_number">
+        <small id="end_help" class="form-text text-muted">The number of the last sub-storage.</small>
+      </div>
+    </div>
+    <div class="row mt-1">
+      <div class="col-md-12">
+        <label for="edit_description">Description</label>
+        <textarea class="form-control" id="edit_description" rows="3" name="Description"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="container mt-2">
+    <button type="button" class="btn btn-primary"
+      onclick="API_CreateStorage(this.parentElement.parentElement);">Create</button>
+    <button type="button" class="btn btn-primary" onclick="showStorage();">Close</button>
+  </div>
+</form>

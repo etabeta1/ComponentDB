@@ -35,17 +35,19 @@ function showCreateNewForm(type) {
         case "PART":
             fetch("/api/storage_names").then((response) => {
                 return response.json();
-            }).then((data) => {
+            }).then((storage_data) => {
                 fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", {
                     new: true,
-                    names: data
+                    ...storage_data
                 }).then(() => {
                     showContent();
                 });
             });
             break;
         case "STORAGE":
-            alert("Not implemented yet!");
+            fetchAndRenderTemplate("#main", "/static/templates/new_storage_form.hbs", {}).then(() => {
+                showContent();
+            });
             break;
         default:
             alert("Unknown type!");
@@ -125,6 +127,33 @@ function API_UpdatePart(form) {
     }).then(async (response) => {
         if (response.status == 200) {
             showParts();
+        } else {
+            alert(await response.text());
+            showContent();
+        }
+    }).catch((error) => {
+        alert(error);
+        showContent();
+    });
+
+    return false;
+}
+
+function API_CreateStorage(form) {
+    hideContent();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    fetch("/api/storages", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    }).then(async (response) => {
+        if (response.status == 200) {
+            showStorage();
         } else {
             alert(await response.text());
             showContent();
