@@ -1,0 +1,12 @@
+<div class="container">
+  <a class="navbar-brand" href="#">ComponentDB</a>
+  <div class="" id="navbarSupportedContent">
+    <ul class="nav nav-tabs">
+      {{#each tabs}}
+        <li class="nav-item" id="{{id}}">
+          <div class="nav-link {{#if active}}active{{/if}}" aria-current="page">{{name}}</div>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

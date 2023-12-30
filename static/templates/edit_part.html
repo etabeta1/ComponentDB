@@ -1,0 +1,58 @@
+<form id="part_form">
+  <input type="hidden" name="Id" value="{{Id}}">
+  <div class="container">
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label for="edit_mpn">Manufacturer Part Number (MPN)</label>
+        <input type="text" class="form-control" id="edit_mpn" aria-describedby="mpn_help" placeholder="MPN"
+          value="{{MPN}}" name="MPN">
+        <small id="mpn_help" class="form-text text-muted">The code that identifies the part.</small>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="edit_manufacturer">Manufacturer</label>
+        <input type="text" class="form-control" id="edit_manufacturer" aria-describedby="manufacturer_help"
+          placeholder="Manufacturer" value="{{Manufacturer}}" name="Manufacturer">
+        <small id="manufacturer_help" class="form-text text-muted">Who made this part?</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <label for="edit_description">Description</label>
+        <textarea class="form-control" id="edit_description" rows="3" name="Description">{{Description}}</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <label for="edit_datasheet">Datasheet URL</label>
+        <input type="text" class="form-control" id="edit_datasheet" aria-describedby="datasheet_help"
+          placeholder="Datasheet URL" value="{{datasheet}}" name="Datasheet">
+        <small id="datasheet_help" class="form-text text-muted">The URL at which you can find the datasheet for this
+          part.</small>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <label for="edit_storage">Storage</label>
+        <select class="form-control" id="edit_storage" aria-describedby="storage_help" name="Storage">
+          {{#each names}}
+          <option value="{{this}}" {{#ifCond this ../Name}}selected{{/ifCond}}>{{this}}</option>
+          {{/each}}
+          <small id="storage_help" class="form-text text-muted">Where is this part stored?</small>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="edit_quantity">Amount</label>
+        <input type="number" class="form-control" id="edit_amount" aria-describedby="amount_help" placeholder="Amount"
+          value="{{Amount}}" min="0" name="Amount">
+        <small id="amount_help" class="form-text text-muted">How many of this part are there?</small>
+      </div>
+    </div>
+    {{#if new}}
+    <button type="button" class="btn btn-primary"
+      onclick="create_part(this.parentElement.parentElement);">Create</button>
+    {{else}}
+    <button type="button" class="btn btn-primary" onclick="update_part(this.parentElement.parentElement);">Save</button>
+    {{/if}}
+    <button type="button" class="btn btn-primary" onclick="showParts();">Close</button>
+  </div>
+</form>
