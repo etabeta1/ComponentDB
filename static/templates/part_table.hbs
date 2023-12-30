@@ -1,0 +1,35 @@
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>MPN</th>
+        <th>Manufacturer</th>
+        <th>Description</th>
+        <th>Datasheet</th>
+        <th>Location</th>
+        <th>Amount</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each rows}}
+      <tr>
+        <td>{{Id}}</td>
+        <td>{{MPN}}</td>
+        <td>{{Manufacturer}}</td>
+        <td>{{Description}}</td>
+        <td>
+          {{#ifNotEmpty Datasheet}}
+          <a href="{{Datasheet}}" target="_blank"><i class="bi bi-file-earmark-pdf"></i></a>
+          {{/ifNotEmpty}}
+        </td>
+        <td>{{Location}}</td>
+        <td>{{Amount}}</td>
+        <td><a onclick="showEditForm('PART', {{Id}})"><i class="bi bi-pencil-square"></i></a></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+<div class="btn btn-primary" onclick="showCreateNewForm('PART')">New</div>

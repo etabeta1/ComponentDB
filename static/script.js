@@ -1,11 +1,3 @@
-// Handlebars helper to compare two values
-Handlebars.registerHelper('ifCond', function (v1, v2, options) {
-    if (v1 === v2) {
-        return options.fn(this);
-    }
-    return options.inverse(this);
-});
-
 // Fetch template from server then render it into given element
 async function fetchAndRenderTemplate(selector, templatePath, context) {
     const response = await fetch(templatePath);
@@ -14,36 +6,41 @@ async function fetchAndRenderTemplate(selector, templatePath, context) {
     document.querySelector(selector).innerHTML = template(context);
 }
 
-// Fetch the table template and render it with the data from the given endpoint
-function showTable(endpoint, type) {
-    console.log(type);
-    fetch(endpoint).then((response) => {
+// Show parts and storages tables
+function showParts() {
+    fetch("/api/parts").then((response) => {
         return response.json();
     }).then((data) => {
-        fetchAndRenderTemplate("#main", "/static/templates/table.html", { ...data, type: type });
+        fetchAndRenderTemplate("#main", "/static/templates/part_table.hbs", data).then(() => {
+            showContent();
+        });
     });
 }
 
-// Show parts and storages tables
-function showParts() {
-    showTable("/api/parts", "PART");
-}
-
 function showStorage() {
-    showTable("/api/storages", "STORAGE");
+    fetch("/api/storages").then((response) => {
+        return response.json();
+    }).then((data) => {
+        fetchAndRenderTemplate("#main", "/static/templates/storage_table.hbs", data).then(() => {
+            showContent();
+        });
+    });
 }
 
 // Show the form for a new part or storage
 function showCreateNewForm(type) {
-    document.querySelector("#main").innerHTML = "";
+    hideContent();
+
     switch (type) {
         case "PART":
             fetch("/api/storage_names").then((response) => {
                 return response.json();
             }).then((data) => {
-                fetchAndRenderTemplate("#main", "/static/templates/edit_part.html", {
+                fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", {
                     new: true,
                     names: data
+                }).then(() => {
+                    showContent();
                 });
             });
             break;
@@ -58,7 +55,8 @@ function showCreateNewForm(type) {
 
 // Show the same form but for editing an existing part or storage
 function showEditForm(type, id) {
-    document.querySelector("#main").innerHTML = "";
+    hideContent();
+
     switch (type) {
         case "PART":
             fetch(`/api/parts/${id}`).then((response) => {
@@ -68,7 +66,9 @@ function showEditForm(type, id) {
                     return response.json();
                 }).then((storage_data) => {
                     const data = { ...storage_data, ...parts_data, new: false }
-                    fetchAndRenderTemplate("#main", "/static/templates/edit_part.html", data);
+                    fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", data).then(() => {
+                        showContent();
+                    });
                 });
             });
             break;
@@ -82,7 +82,9 @@ function showEditForm(type, id) {
 }
 
 // Function to create a new part
-function create_part(form) {
+function API_CreatePart(form) {
+    hideContent();
+
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
@@ -92,21 +94,25 @@ function create_part(form) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
-    }).then((response) => {
+    }).then(async (response) => {
         if (response.status == 200) {
             showParts();
         } else {
-            console.error(response);
+            alert(await response.text());
+            showContent();
         }
     }).catch((error) => {
-        console.error(error);
+        alert(error);
+        showContent();
     });
 
     return false;
 }
 
 // Function to update an existing part
-function update_part(form) {
+function API_UpdatePart(form) {
+    hideContent();
+
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
@@ -116,15 +122,25 @@ function update_part(form) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data)
-    }).then((response) => {
+    }).then(async (response) => {
         if (response.status == 200) {
             showParts();
         } else {
-            console.error(response);
+            alert(await response.text());
+            showContent();
         }
     }).catch((error) => {
-        console.error(error);
+        alert(error);
+        showContent();
     });
 
     return false;
+}
+
+function hideContent() {
+    document.querySelector("#main").style.display = "none";
+}
+
+function showContent() {
+    document.querySelector("#main").style.display = "block";
 }

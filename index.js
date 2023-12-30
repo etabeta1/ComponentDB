@@ -38,35 +38,50 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+// Endpoint to get all parts
 apiRouter.get('/parts', (req, res) => {
-    const sql = "SELECT p.Id, p.MPN, p.Description, p.Manufacturer, p.Datasheet, s.Name, p.amount FROM parts p LEFT JOIN Storage s ON p.StorageId = s.Id;";
+    const sql = "SELECT p.Id, p.MPN, p.Description, p.Manufacturer, p.Datasheet, s.Name as Location, p.amount FROM parts p LEFT JOIN Storage s ON p.StorageId = s.Id;";
     db.all(sql, [], (err, rows) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
-            console.log(rows);
             res.json({
                 headers: ["ID", "MPN", "Description", "Manufacturer", "Datasheet", "Location", "Amount", "Edit"].map((h) => { return { name: h } }),
-                rows: rows.map((r) => {
-                    return { cells: [r.Id, r.MPN, r.Description, r.Manufacturer, r.Datasheet, r.Name, r.Amount], editable: true, new: false };
-                }),
+                rows: rows,
             });
         }
     });
 });
 
+// Endpoint to get a single part
 apiRouter.get('/parts/:id', (req, res) => {
     const sql = "SELECT p.Id, p.MPN, p.Description, p.Manufacturer, p.Datasheet, s.Name, p.amount FROM parts p LEFT JOIN Storage s ON p.StorageId = s.Id WHERE p.Id = ?;";
     db.get(sql, [req.params.id], (err, row) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
-            console.log(row);
+            res.json(row);
         }
     });
 });
 
+// Endpoint to create a new part
 apiRouter.post('/parts', (req, res) => {
+    if (!req.body.MPN) {
+        res.status(400).send("MPN is required");
+        return;
+    }
+
+    if (!req.body.Storage) {
+        res.status(400).send("Storage is required");
+        return;
+    }
+
+    if (!req.body.Amount) {
+        res.status(400).send("Amount is required");
+        return;
+    }
+
     db.get("SELECT Id FROM Storage WHERE Name = ?;", [req.body.Storage], (err, row) => {
         if (err) {
             res.status(500).send(err.message);
@@ -83,7 +98,23 @@ apiRouter.post('/parts', (req, res) => {
     });
 });
 
+// Endpoint to update an existing part
 apiRouter.put('/parts/:id', (req, res) => {
+    if (!req.body.MPN) {
+        res.status(400).send("MPN is required");
+        return;
+    }
+
+    if (!req.body.Storage) {
+        res.status(400).send("Storage is required");
+        return;
+    }
+
+    if (!req.body.Amount) {
+        res.status(400).send("Amount is required");
+        return;
+    }
+
     db.get("SELECT Id FROM Storage WHERE Name = ?;", [req.body.Storage], (err, row) => {
         if (err) {
             res.status(500).send(err.message);
@@ -101,16 +132,14 @@ apiRouter.put('/parts/:id', (req, res) => {
 });
 
 apiRouter.get('/storages', (req, res) => {
-    const sql = "SELECT * FROM Storage;";
+    const sql = "SELECT Storage.Id, Storage.Name, Storage.Description, SUM(Parts.Amount) AS Part_count FROM Storage LEFT JOIN Parts ON Parts.StorageId = Storage.Id GROUP BY Storage.Id;";
+
     db.all(sql, [], (err, rows) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
             res.json({
-                headers: ["ID", "Name", "Edit"].map((h) => { return { name: h } }),
-                rows: rows.map((r) => {
-                    return { cells: [r.Id, r.Name], editable: false }
-                }),
+                rows: rows,
             });
         }
     });

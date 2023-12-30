@@ -35,7 +35,7 @@
         <label for="edit_storage">Storage</label>
         <select class="form-control" id="edit_storage" aria-describedby="storage_help" name="Storage">
           {{#each names}}
-          <option value="{{this}}" {{#ifCond this ../Name}}selected{{/ifCond}}>{{this}}</option>
+          <option value="{{this}}" {{#ifEq this ../Name}}selected{{/ifEq}}>{{this}}</option>
           {{/each}}
           <small id="storage_help" class="form-text text-muted">Where is this part stored?</small>
         </select>
@@ -49,9 +49,9 @@
     </div>
     {{#if new}}
     <button type="button" class="btn btn-primary"
-      onclick="create_part(this.parentElement.parentElement);">Create</button>
+      onclick="API_CreatePart(this.parentElement.parentElement);">Create</button>
     {{else}}
-    <button type="button" class="btn btn-primary" onclick="update_part(this.parentElement.parentElement);">Save</button>
+    <button type="button" class="btn btn-primary" onclick="API_UpdatePart(this.parentElement.parentElement);">Save</button>
     {{/if}}
     <button type="button" class="btn btn-primary" onclick="showParts();">Close</button>
   </div>

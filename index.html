@@ -22,37 +22,51 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
   <script src="/static/script.js"></script>
   <script>
+    // Handlebars helper to compare two values
+    Handlebars.registerHelper('ifEq', function (v1, v2, options) {
+      if (v1 === v2) {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    });
+
+    Handlebars.registerHelper("ifNotEmpty", function (v1, options) {
+      if (v1 !== undefined && v1 !== null && v1 !== "") {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    });
+
     document.addEventListener("DOMContentLoaded", async (event) => {
       const tab_descriptions = [
         { name: "Parts", active: false, id: "parts_tab", callback: showParts },
         { name: "Storage", active: false, id: "storage_tab", callback: showStorage }
       ];
 
-      await fetchAndRenderTemplate(".navbar", "/static/templates/navbar.html", {
+      fetchAndRenderTemplate(".navbar", "/static/templates/navbar.hbs", {
         tabs: tab_descriptions
-      });
+      }).then(() => {
+        tab_descriptions.forEach((desc) => {
+          const tab = document.getElementById(desc.id);
+          const tabs = document.querySelectorAll(".nav-item");
 
-      tab_descriptions.forEach((desc) => {
-        const tab = document.getElementById(desc.id);
-        const tabs = document.querySelectorAll(".nav-item");
+          tab.addEventListener("click", (event) => {
+            if (tab.querySelector(".nav-link").classList.contains("active")) {
+              return;
+            }
 
-        tab.addEventListener("click", (event) => {
-          if (tab.querySelector(".nav-link").classList.contains("active")) {
-            return;
-          }
-
-          document.querySelector("#main").innerHTML = "";
-          tabs.forEach((tab) => {
-            tab.querySelector(".nav-link").classList.remove("active");
+            document.querySelector("#main").innerHTML = "";
+            tabs.forEach((tab) => {
+              tab.querySelector(".nav-link").classList.remove("active");
+            });
+            tab.querySelector(".nav-link").classList.add("active");
+            desc.callback();
           });
-          tab.querySelector(".nav-link").classList.add("active");
-          desc.callback();
+
         });
 
+        document.getElementById(tab_descriptions[0].id).click();
       });
-
-      document.getElementById(tab_descriptions[0].id).click();
-
     });    
   </script>
 </head>
