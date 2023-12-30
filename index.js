@@ -1,8 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const sqlite3 = require('sqlite3');
 const fs = require('fs');
 const { exit } = require('process');
 
+const HTTP_PORT = process.env.HTTP_PORT || 3000;
+const DB_PATH = process.env.DB_PATH || "./database.db";
 
 const app = express();
 app.use(express.json());
@@ -16,7 +19,7 @@ app.use(function (req, res, next) {
 const apiRouter = express.Router();
 apiRouter.use(express.json());
 
-const db = new sqlite3.Database('./database.db', (err) => {
+const db = new sqlite3.Database(DB_PATH, (err) => {
     if (err) {
         console.error("Error opening database " + err.message);
         exit(1);
@@ -217,6 +220,6 @@ apiRouter.get("/storage_names", (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log('Server started on http://localhost:3000');
+app.listen(HTTP_PORT, () => {
+    console.log('Server started on http://localhost:' + HTTP_PORT);
 });
