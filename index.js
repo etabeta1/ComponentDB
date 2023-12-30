@@ -131,6 +131,28 @@ apiRouter.put('/parts/:id', (req, res) => {
     });
 });
 
+apiRouter.delete('/parts/:id', (req, res) => {
+    db.get("SELECT Amount FROM Parts WHERE Id = ?;", [req.params.id], (err, row) => {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            if (row.Amount > 0) {
+                res.status(400).send("Part has still parts in stock");
+                return;
+            }
+
+            const sql = "DELETE FROM Parts WHERE Id = ?;";
+            db.run(sql, [req.params.id], (err) => {
+                if (err) {
+                    res.status(500).send(err.message);
+                } else {
+                    res.sendStatus(200);
+                }
+            });
+        }
+    });
+});
+
 apiRouter.get('/storages', (req, res) => {
     const sql = "SELECT Storage.Id, Storage.Name, Storage.Description, SUM(Parts.Amount) AS Part_count FROM Storage LEFT JOIN Parts ON Parts.StorageId = Storage.Id GROUP BY Storage.Id;";
 

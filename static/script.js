@@ -166,6 +166,24 @@ function API_CreateStorage(form) {
     return false;
 }
 
+function API_DeletePart(id) {
+    hideContent();
+
+    fetch(`/api/parts/${id}`, {
+        method: "DELETE"
+    }).then(async (response) => {
+        if (response.status == 200) {
+            showParts();
+        } else {
+            alert(await response.text());
+            showContent();
+        }
+    }).catch((error) => {
+        alert(error);
+        showContent();
+    });
+}
+
 function hideContent() {
     document.querySelector("#main").style.display = "none";
 }
