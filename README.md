@@ -4,7 +4,12 @@ A simple way to organize your collection of electronic parts.
 
 ## Features
 
-ComponentDB is a simple management software used to organize electronic parts and to keep track of their location inside of your storage.
+ComponentDB allows you to:
+
+- Add parts to your collection and set their storage location
+- Keep track of how many parts you have
+- Manage your storage locations
+- Keep track of the datasheets for your parts and their description
 
 ## Installation
 
@@ -29,6 +34,10 @@ Run the app
 - Sort and filter parts
 - Search by part number and description
 - Search by storage location
-- Edit storage locations
-- Remove storage locations
-- Dump parts in one storage location into another
+- Export parts to CSV
+
+## Security
+
+Never EVER open this app to the internet. It is not secure and it is not meant to be (at least for now).
+
+It is meant to be used locally on your computer or on a local network.
