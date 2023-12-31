@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Storage (
     Description TEXT
 );
 
--- INSERT INTO Storage (Name, Description) VALUES ('Somewhere else', 'The default storage location for parts that are not stored anywhere.');
+INSERT OR IGNORE INTO Storage (Id, Name, Description) VALUES (0, 'Somewhere else', 'The default storage location for parts that are not stored anywhere.');
 
 CREATE TABLE IF NOT EXISTS Parts (
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,5 +19,3 @@ CREATE TABLE IF NOT EXISTS Parts (
     UNIQUE(MPN, Manufacturer)
 );
 
--- INSERT INTO Storage (Name, Description) VALUES ('Default', 'Default storage');
--- INSERT INTO Parts (MPN, Description, Datasheet, StorageId, Amount) VALUES ('123', 'Test part', 'http://example.com', 1, 10);

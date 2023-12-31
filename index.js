@@ -87,12 +87,12 @@ apiRouter.post('/parts', (req, res) => {
         return;
     }
 
-    db.get("SELECT Id FROM Storage WHERE Name = ?;", [req.body.Storage], (err, row) => {
+    db.get("SELECT Id FROM Storage WHERE Id = ?;", [req.body.Storage], (err, row) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
             const sql = "INSERT INTO Parts (MPN, Description, Manufacturer, Datasheet, StorageId, Amount) VALUES (?, ?, ?, ?, ?, ?);";
-            db.run(sql, [req.body.MPN.trim(), req.body.Description.trim(), req.body.Manufacturer.trim(), req.body.Datasheet.trim(), row.Id, req.body.Amount], (err) => {
+            db.run(sql, [req.body.MPN.trim(), req.body.Description.trim(), req.body.Manufacturer.trim(), req.body.Datasheet.trim(), req.body.Storage, req.body.Amount], (err) => {
                 if (err) {
                     res.status(500).send(err.message);
                 } else {

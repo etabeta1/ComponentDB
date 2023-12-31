@@ -33,7 +33,7 @@ function showCreateNewForm(type) {
 
     switch (type) {
         case "PART":
-            fetch("/api/storage_names").then((response) => {
+            fetch("/api/storages").then((response) => {
                 return response.json();
             }).then((storage_data) => {
                 fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", {
