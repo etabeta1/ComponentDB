@@ -6,6 +6,10 @@
         <th>Name</th>
         <th>Description</th>
         <th>Part count</th>
+        <th>Unique Parts</th>
+        <th>Edit</th>
+        <th>Dump</th>
+        <th>Delete</th>
       </tr>
     </thead>
     <tbody>
@@ -15,6 +19,18 @@
         <td>{{Name}}</td>
         <td>{{Description}}</td>
         <td>{{Part_count}}</td>
+        <td>{{Unique_parts}}</td>
+        <td><a onclick="showEditStorageForm({{Id}})"><i class="bi bi-pencil-square"></i></a></td>
+        <td>
+          {{#ifNotEq Unique_parts 0}}
+          <a onclick="showDumpStorageForm({{Id}})"><i class="bi bi-arrow-90deg-down"></i></a>
+          {{/ifNotEq}}
+        </td>
+        <td>
+          {{#ifEq Unique_parts 0}}
+          <a onclick="if(confirm('Are you sure?')){API_DeleteStorage({{Id}})}"><i class="bi bi-trash"></i></a>
+          {{/ifEq}}
+        </td>
       </tr>
       {{/each}}
   </table>

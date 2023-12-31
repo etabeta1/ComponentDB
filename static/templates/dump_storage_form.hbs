@@ -1,0 +1,22 @@
+<form>
+  <input type="hidden" name="Id" value="{{Id}}">
+  <div class="container">
+    <div class="row mt-1">
+      <div class="col-md-12">
+        <label for="edit_description">Select the storage location to dump <b>{{Name}}</b> content into</label>
+        <select class="form-control" id="edit_storage" aria-describedby="storage_help" name="Storage">
+          {{#each rows}}
+          <option value="{{Id}}" {{#ifEq Name ../Name}}selected{{/ifEq}}>{{Name}}</option>
+          {{/each}}
+        </select>
+        <small id="storage_help" class="form-text text-muted">All the contents of {{Name}} will be transferred to the
+          selected storage location</small>
+      </div>
+    </div>
+    <div class="container mt-2">
+      <button type="button" class="btn btn-primary"
+        onclick="API_DumpStorage(this.parentElement.parentElement.parentElement);">Save</button>
+      <button type="button" class="btn btn-primary" onclick="showStorage();">Close</button>
+    </div>
+  </div>
+</form>

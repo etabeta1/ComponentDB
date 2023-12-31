@@ -55,32 +55,48 @@ function showCreateNewForm(type) {
     }
 }
 
-// Show the same form but for editing an existing part or storage
-function showEditForm(type, id) {
+function showEditPartForm(id) {
     hideContent();
 
-    switch (type) {
-        case "PART":
-            fetch(`/api/parts/${id}`).then((response) => {
-                return response.json();
-            }).then((parts_data) => {
-                fetch("/api/storage_names").then((response) => {
-                    return response.json();
-                }).then((storage_data) => {
-                    const data = { ...storage_data, ...parts_data, new: false }
-                    fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", data).then(() => {
-                        showContent();
-                    });
-                });
+    fetch(`/api/parts/${id}`).then((response) => {
+        return response.json();
+    }).then((parts_data) => {
+        fetch("/api/storages").then((response) => {
+            return response.json();
+        }).then((storage_data) => {
+            const data = { ...storage_data, ...parts_data, new: false }
+            fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", data).then(() => {
+                showContent();
             });
-            break;
-        case "STORAGE":
-            alert("Not implemented yet!");
-            break;
-        default:
-            alert("Unknown type!");
-            break;
-    }
+        });
+    });
+}
+
+function showEditStorageForm(id) {
+    hideContent();
+
+    fetch(`/api/storages/${id}`).then((response) => {
+        return response.json();
+    }).then((data) => {
+        fetchAndRenderTemplate("#main", "/static/templates/edit_storage_form.hbs", data).then(() => {
+            showContent();
+        });
+    });
+}
+
+function showDumpStorageForm(id) {
+    fetch(`/api/storages/${id}`).then((response) => {
+        return response.json();
+    }).then((data) => {
+        fetch('/api/storages').then((response) => {
+            return response.json();
+        }).then((storage_data) => {
+            const context = { ...data, ...storage_data };
+            fetchAndRenderTemplate("#main", "/static/templates/dump_storage_form.hbs", context).then(() => {
+                showContent();
+            });
+        });
+    });
 }
 
 // Function to create a new part
@@ -182,6 +198,78 @@ function API_DeletePart(id) {
         alert(error);
         showContent();
     });
+}
+
+function API_DeleteStorage(id) {
+    hideContent();
+
+    fetch(`/api/storages/${id}`, {
+        method: "DELETE"
+    }).then(async (response) => {
+        if (response.status == 200) {
+            showStorage();
+        } else {
+            alert(await response.text());
+            showContent();
+        }
+    }).catch((error) => {
+        alert(error);
+        showContent();
+    });
+}
+
+function API_UpdateStorage(form) {
+    hideContent();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    fetch(`/api/storages/${data.Id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    }).then(async (response) => {
+        if (response.status == 200) {
+            showStorage();
+        } else {
+            alert(await response.text());
+            showContent();
+        }
+    }).catch((error) => {
+        alert(error);
+        showContent();
+    });
+
+    return false;
+}
+
+function API_DumpStorage(form) {
+    hideContent();
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    fetch(`/api/storages/${data.Id}/dumpInto/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    }).then(async (response) => {
+        if (response.status == 200) {
+            showStorage();
+        } else {
+            alert(await response.text());
+            showContent();
+        }
+    }).catch((error) => {
+        alert(error);
+        showContent();
+    });
+
+    return false;
 }
 
 function hideContent() {

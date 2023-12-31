@@ -27,7 +27,7 @@
         </td>
         <td>{{Location}}</td>
         <td>{{Amount}}</td>
-        <td><a onclick="showEditForm('PART', {{Id}})"><i class="bi bi-pencil-square"></i></a></td>
+        <td><a onclick="showEditPartForm({{Id}})"><i class="bi bi-pencil-square"></i></a></td>
         <td>
           {{#ifEq Amount 0}}
           <a onclick="if(confirm('Are you sure?')){API_DeletePart({{Id}})}"><i class="bi bi-trash"></i></a>

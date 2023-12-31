@@ -1,0 +1,16 @@
+<form>
+  <input type="hidden" name="Id" value="{{Id}}">
+  <div class="container">
+    <div class="row mt-1">
+      <div class="col-md-12">
+        <label for="edit_description">Edit description for <b>{{Name}}</b></label>
+        <textarea class="form-control" id="edit_description" rows="3" name="Description">{{Description}}</textarea>
+      </div>
+    </div>
+    <div class="container mt-2">
+      <button type="button" class="btn btn-primary"
+        onclick="API_UpdateStorage(this.parentElement.parentElement.parentElement);">Save</button>
+      <button type="button" class="btn btn-primary" onclick="showStorage();">Close</button>
+    </div>
+  </div>
+</form>

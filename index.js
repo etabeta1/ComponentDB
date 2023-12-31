@@ -3,6 +3,7 @@ const express = require('express');
 const sqlite3 = require('sqlite3');
 const fs = require('fs');
 const { exit } = require('process');
+var morgan = require('morgan')
 
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
 const DB_PATH = process.env.DB_PATH || "./database.db";
@@ -18,6 +19,7 @@ app.use(function (req, res, next) {
 
 const apiRouter = express.Router();
 apiRouter.use(express.json());
+apiRouter.use(morgan('dev'));
 
 const db = new sqlite3.Database(DB_PATH, (err) => {
     if (err) {
@@ -118,7 +120,7 @@ apiRouter.put('/parts/:id', (req, res) => {
         return;
     }
 
-    db.get("SELECT Id FROM Storage WHERE Name = ?;", [req.body.Storage], (err, row) => {
+    db.get("SELECT Id FROM Storage WHERE Id = ?;", [req.body.Storage], (err, row) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
@@ -157,7 +159,7 @@ apiRouter.delete('/parts/:id', (req, res) => {
 });
 
 apiRouter.get('/storages', (req, res) => {
-    const sql = "SELECT Storage.Id, Storage.Name, Storage.Description, SUM(Parts.Amount) AS Part_count FROM Storage LEFT JOIN Parts ON Parts.StorageId = Storage.Id GROUP BY Storage.Id;";
+    const sql = "SELECT Storage.Id, Storage.Name, Storage.Description, COUNT(Parts.Id) AS Unique_parts, IFNULL(SUM(Parts.Amount), 0) AS Part_count FROM Storage LEFT JOIN Parts ON Parts.StorageId = Storage.Id GROUP BY Storage.Id;";
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -166,6 +168,17 @@ apiRouter.get('/storages', (req, res) => {
             res.json({
                 rows: rows,
             });
+        }
+    });
+});
+
+apiRouter.get('/storages/:id', (req, res) => {
+    const sql = "SELECT Id, Name, Description FROM Storage WHERE Id = ?;";
+    db.get(sql, [req.params.id], (err, row) => {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            res.json(row);
         }
     });
 });
@@ -206,16 +219,61 @@ apiRouter.post('/storages', (req, res) => {
             res.sendStatus(200);
         }
     });
-
 });
 
-apiRouter.get("/storage_names", (req, res) => {
-    const sql = "SELECT Name FROM Storage;";
-    db.all(sql, [], (err, rows) => {
+apiRouter.put("/storages/:id", (req, res) => {
+    if (!req.body.Description) {
+        res.status(400).send("Description is required");
+        return;
+    }
+
+    const sql = "UPDATE Storage SET Description = ? WHERE Id = ?;";
+
+    db.run(sql, [req.body.Description.trim(), req.params.id], (err) => {
         if (err) {
             res.status(500).send(err.message);
         } else {
-            res.json({ names: rows.map((r) => r.Name) });
+            res.sendStatus(200);
+        }
+    });
+});
+
+apiRouter.delete("/storages/:id", (req, res) => {
+    db.get("SELECT Id FROM Parts WHERE StorageId = ?;", [req.params.id], (err, row) => {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            if (row) {
+                res.status(400).send("Storage is not empty");
+                return;
+            }
+
+            const sql = "DELETE FROM Storage WHERE Id = ?;";
+            db.run(sql, [req.params.id], (err) => {
+                if (err) {
+                    res.status(500).send(err.message);
+                } else {
+                    res.sendStatus(200);
+                }
+            });
+        }
+    });
+});
+
+apiRouter.post("/storages/:id/dumpInto/", (req, res) => {
+    console.log(req.body);
+
+    if (!req.body.Id) {
+        res.status(400).send("Id is required");
+        return;
+    }
+
+    const sql = "UPDATE Parts SET StorageId = ? WHERE StorageId = ?;";
+    db.run(sql, [req.body.Storage, req.params.id], (err) => {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            res.sendStatus(200);
         }
     });
 });

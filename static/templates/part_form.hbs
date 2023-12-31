@@ -35,8 +35,8 @@
       <div class="col-md-6">
         <label for="edit_storage">Storage</label>
         <select class="form-control" id="edit_storage" aria-describedby="storage_help" name="Storage">
-          {{#each names}}
-          <option value="{{this}}" {{#ifEq this ../Name}}selected{{/ifEq}}>{{this}}</option>
+          {{#each rows}}
+          <option value="{{Id}}" {{#ifEq Name ../Name}}selected{{/ifEq}}>{{Name}}</option>
           {{/each}}
         </select>
         <small id="storage_help" class="form-text text-muted">Where is this part stored?</small>
