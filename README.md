@@ -41,3 +41,5 @@ Run the app
 Never EVER open this app to the internet. It is not secure and it is not meant to be (at least for now).
 
 It is meant to be used locally on your computer or on a local network.
+
+This app is intended to be used by only a single user at a time: if multiple writes on the databases happen at the same time, corruption may occour.
