@@ -18,8 +18,8 @@ app.use(function (req, res, next) {
 });
 
 const apiRouter = express.Router();
-apiRouter.use(express.json());
-apiRouter.use(morgan('dev'));
+apiRouter.use(express.json());      // Parse JSON body
+apiRouter.use(morgan('dev'));       // Log requests
 
 const db = new sqlite3.Database(DB_PATH, (err) => {
     if (err) {
@@ -136,6 +136,7 @@ apiRouter.put('/parts/:id', (req, res) => {
     });
 });
 
+// Endpoint to delete a part
 apiRouter.delete('/parts/:id', (req, res) => {
     db.get("SELECT Amount FROM Parts WHERE Id = ?;", [req.params.id], (err, row) => {
         if (err) {
@@ -158,6 +159,7 @@ apiRouter.delete('/parts/:id', (req, res) => {
     });
 });
 
+// Endpoint to get all storages
 apiRouter.get('/storages', (req, res) => {
     const sql = "SELECT Storage.Id, Storage.Name, Storage.Description, COUNT(Parts.Id) AS Unique_parts, IFNULL(SUM(Parts.Amount), 0) AS Part_count FROM Storage LEFT JOIN Parts ON Parts.StorageId = Storage.Id GROUP BY Storage.Id;";
 
@@ -172,6 +174,7 @@ apiRouter.get('/storages', (req, res) => {
     });
 });
 
+// Endpoint to get a single storage
 apiRouter.get('/storages/:id', (req, res) => {
     const sql = "SELECT Id, Name, Description FROM Storage WHERE Id = ?;";
     db.get(sql, [req.params.id], (err, row) => {
@@ -183,6 +186,7 @@ apiRouter.get('/storages/:id', (req, res) => {
     });
 });
 
+// Endpoint to create a new storage
 apiRouter.post('/storages', (req, res) => {
     if (!req.body.Name) {
         res.status(400).send("Name is required");
@@ -221,6 +225,7 @@ apiRouter.post('/storages', (req, res) => {
     });
 });
 
+// Endpoint to update an existing storage
 apiRouter.put("/storages/:id", (req, res) => {
     if (!req.body.Description) {
         res.status(400).send("Description is required");
@@ -238,6 +243,7 @@ apiRouter.put("/storages/:id", (req, res) => {
     });
 });
 
+// Endpoint to delete a storage
 apiRouter.delete("/storages/:id", (req, res) => {
     db.get("SELECT Id FROM Parts WHERE StorageId = ?;", [req.params.id], (err, row) => {
         if (err) {
@@ -260,6 +266,7 @@ apiRouter.delete("/storages/:id", (req, res) => {
     });
 });
 
+// Endpoint to get all parts in a storage
 apiRouter.post("/storages/:id/dumpInto/", (req, res) => {
     console.log(req.body);
 

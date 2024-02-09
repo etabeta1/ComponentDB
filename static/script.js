@@ -6,7 +6,7 @@ async function fetchAndRenderTemplate(selector, templatePath, context) {
     document.querySelector(selector).innerHTML = template(context);
 }
 
-// Show parts and storages tables
+// Show parts table
 function showParts() {
     fetch("/api/parts").then((response) => {
         return response.json();
@@ -17,6 +17,7 @@ function showParts() {
     });
 }
 
+// Show storages table
 function showStorage() {
     fetch("/api/storages").then((response) => {
         return response.json();
@@ -27,34 +28,30 @@ function showStorage() {
     });
 }
 
-// Show the form for a new part or storage
-function showCreateNewForm(type) {
+// Show the form to create a new part
+function showCreateNewPartForm() {
     hideContent();
-
-    switch (type) {
-        case "PART":
-            fetch("/api/storages").then((response) => {
-                return response.json();
-            }).then((storage_data) => {
-                fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", {
-                    new: true,
-                    ...storage_data
-                }).then(() => {
-                    showContent();
-                });
-            });
-            break;
-        case "STORAGE":
-            fetchAndRenderTemplate("#main", "/static/templates/new_storage_form.hbs", {}).then(() => {
-                showContent();
-            });
-            break;
-        default:
-            alert("Unknown type!");
-            break;
-    }
+    fetch("/api/storages").then((response) => {
+        return response.json();
+    }).then((storage_data) => {
+        fetchAndRenderTemplate("#main", "/static/templates/part_form.hbs", {
+            new: true,
+            ...storage_data
+        }).then(() => {
+            showContent();
+        });
+    });
 }
 
+// Show the form to create a new storage
+function showCreateNewStorageForm() {
+    hideContent();
+    fetchAndRenderTemplate("#main", "/static/templates/new_storage_form.hbs", {}).then(() => {
+        showContent();
+    });
+}
+
+// Show the form to edit a part
 function showEditPartForm(id) {
     hideContent();
 
@@ -72,6 +69,7 @@ function showEditPartForm(id) {
     });
 }
 
+// Show the form to edit a storage
 function showEditStorageForm(id) {
     hideContent();
 
@@ -84,6 +82,7 @@ function showEditStorageForm(id) {
     });
 }
 
+// Show the form to dump a storage
 function showDumpStorageForm(id) {
     fetch(`/api/storages/${id}`).then((response) => {
         return response.json();
