@@ -32,6 +32,7 @@ Run the app
 ## Future updates
 
 - Sort and filter parts
+- Store and manage gatasheets locally, not only storing links
 - Search by part number and description
 - Search by storage location
 - Export parts to CSV
